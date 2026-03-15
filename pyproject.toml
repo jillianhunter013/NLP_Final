@@ -1,7 +1,57 @@
 [project]
-name = "nlp-final"
+name = "text-mining-dsdm"
 version = "0.1.0"
-description = "Add your description here"
-readme = "README.md"
-requires-python = ">=3.13"
-dependencies = []
+description = "BSE Text Mining — Contract Completeness Index for International Trade Agreements"
+requires-python = ">=3.10"
+
+dependencies = [
+  # ── Jupyter ────────────────────────────────────────────────────────────────
+  "jupyterlab>=4.2",
+  "ipykernel>=6.29",
+  "ipywidgets>=8.1",           # interactive widgets in notebooks
+
+  # ── Core data ─────────────────────────────────────────────────────────────
+  "pandas>=2.2",
+  "numpy>=1.26",
+
+  # ── Visualisation ─────────────────────────────────────────────────────────
+  "matplotlib>=3.8",
+  "seaborn>=0.13",
+  "pyLDAvis>=3.4",             # interactive LDA topic visualisation (Session 7)
+
+  # ── Machine learning ──────────────────────────────────────────────────────
+  "scikit-learn>=1.4",
+
+  # ── NLP — core (Sessions 3-6) ─────────────────────────────────────────────
+  "nltk>=3.9",
+  "textblob>=0.18",
+  "spacy>=3.7",                # POS tagging and lemmatisation (Session 3)
+
+  # ── NLP — topic modelling (Session 7) ─────────────────────────────────────
+  "gensim>=4.3",               # LDA via gensim.models.LdaModel
+
+  # ── Web scraping (Sessions 1-2, this project) ─────────────────────────────
+  "requests>=2.32",
+  "beautifulsoup4>=4.12",
+
+  # ── File parsing ──────────────────────────────────────────────────────────
+  "striprtf>=0.0.26",          # RTF files (Spain AP exercise)
+  "PyPDF2>=3.0",               # PDF text extraction
+  "lxml>=5.2",                 # fast XML/HTML parser (used by ElementTree backend)
+
+  # ── Utilities ─────────────────────────────────────────────────────────────
+  "tqdm>=4.66",                # progress bars for corpus download loops
+  "python-dotenv>=1.0",        # load GITHUB_TOKEN from .env file (never commit tokens)
+]
+
+[dependency-groups]
+dev = [
+  "ipykernel>=7.1.0",
+]
+
+[tool.uv]
+# Keep a local cache so repeated `uv sync` calls don't re-download packages
+cache-dir = ".uv-cache"
+
+[tool.uv.sources]
+# No private indexes — all packages from PyPI

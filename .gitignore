@@ -1,0 +1,19 @@
+# ── Secrets — NEVER commit these ─────────────────────────────────────────────
+.env
+
+# ── Python environment ────────────────────────────────────────────────────────
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+.uv-cache/
+
+# ── Downloaded data — too large for GitHub (regenerate with the notebooks) ───
+rta_texts/          # 450 ToTA XML files (~90 MB total)
+rta_wto/            # WTO portal outputs
+
+# ── Jupyter checkpoints ───────────────────────────────────────────────────────
+.ipynb_checkpoints/
+
+# ── macOS ─────────────────────────────────────────────────────────────────────
+.DS_Store
