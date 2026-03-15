@@ -1,9 +1,9 @@
 [project]
-name = "nlp-final"
+name = "text-mining-dsdm"
 version = "0.1.0"
-description = "Add your description here"
-readme = "README.md"
-requires-python = ">=3.13"
+description = "BSE Text Mining — Contract Completeness Index for International Trade Agreements"
+requires-python = ">=3.10"
+
 dependencies = [
   # ── Jupyter ────────────────────────────────────────────────────────────────
   "jupyterlab>=4.2",
@@ -41,6 +41,7 @@ dependencies = [
 
   # ── Utilities ─────────────────────────────────────────────────────────────
   "tqdm>=4.66",                # progress bars for corpus download loops
+  "python-dotenv>=1.0",        # load GITHUB_TOKEN from .env file (never commit tokens)
 ]
 
 [dependency-groups]
