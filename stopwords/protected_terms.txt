@@ -1,0 +1,259 @@
+# CCI Protected Signal Terms — Layer 3
+# These MUST NEVER be added to the stopword set.
+# They are used as dictionary signals for CCI scoring.
+# Count: 254
+
+additionally
+aim
+aim to
+aims
+all
+also
+anti-competitive
+anti-dumping
+any
+appeal
+appeals
+appellate
+arbitral
+arbitration
+arbitrator
+are required
+banking
+binding
+binds
+both
+bound by
+bound to
+breach
+breaches
+commit to
+commits
+commits to
+compensate
+compensation
+compensatory
+competition
+compliance
+complies
+comply
+consult
+consultations
+consults
+cooperate
+cooperates
+cooperation
+copyright
+countermeasure
+countermeasures
+countervailing
+currency
+data
+deadline
+deadlines
+define
+defined
+definition
+definitions
+digital
+dispute
+disputes
+dumping
+e-commerce
+each
+either
+electronic commerce
+employment
+encourage
+encouraged
+encourages
+endeavor
+endeavors
+endeavour
+endeavours
+enforce
+enforceable
+enforced
+enforcement
+environment
+environmental
+every
+except
+except where
+exchange rate
+exclusively
+expropriation
+facilitate
+facilitates
+fair and equitable treatment
+final
+finality
+financial services
+finding
+findings
+further
+furthermore
+generally
+good offices
+harmonisation
+harmonise
+harmonised
+harmonization
+harmonize
+harmonized
+herein
+if
+in addition
+in particular
+in so far as
+in the event
+in the event that
+include
+includes
+including
+insofar as
+insurance
+intellectual property
+investment
+investor
+investor-state
+investors
+is required
+labor
+labour
+liberalisation
+liberalise
+liberalization
+liberalize
+market access
+meaning
+means
+mediation
+mediator
+mode of supply
+modes of supply
+monetary
+monopoly
+must
+mutual recognition
+namely
+national treatment
+negative list
+neither
+never
+no
+no later than
+non-binding
+non-compliance
+non-tariff
+nor
+not
+not later than
+notwithstanding
+obligated to
+obliged to
+only
+origin
+other
+otherwise
+panel
+panelist
+panels
+patent
+penalise
+penalize
+penalties
+penalty
+period
+periods
+personal data
+phytosanitary
+positive list
+privacy
+procurement
+procuring entity
+promote
+promoted
+promotes
+provided however
+provided that
+publication
+ratchet
+recommend
+recommends
+reference
+refers
+regulation
+regulations
+regulatory
+regulatory coherence
+regulatory cooperation
+remedial
+remedies
+remedy
+required to
+retaliate
+retaliation
+retaliatory
+rules of origin
+ruling
+rulings
+safeguard
+safeguards
+sanction
+sanctions
+sanitary
+seek to
+seeks to
+settle
+settlement
+settles
+shall
+should
+soe
+solely
+specifically
+sps
+standard
+standardization
+standards
+standstill
+state-owned enterprise
+strive
+strive to
+strives
+subject to
+subsidies
+subsidy
+such as
+suspend
+suspended
+suspension
+tbt
+technical barrier
+telecom
+telecommunications
+time frame
+timeframe
+timeline
+timelines
+to the extent
+to the extent that
+trade facilitation
+trade in services
+trademark
+transparency
+undertake to
+undertakes
+undertakes to
+unless
+violate
+violates
+violation
+where
+where applicable
+within
+without limitation
+without limiting
+without prejudice to
+workers

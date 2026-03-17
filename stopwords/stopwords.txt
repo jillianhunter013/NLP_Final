@@ -1,0 +1,429 @@
+# Trade Agreement Active Stopword List
+# Generated from trade_stopwords.py — Layers 0 + 1 + 2
+# DO NOT add any term from protected_terms.txt to this file.
+# Count: 424
+
+a
+about
+above
+above-mentioned
+abovementioned
+accede
+acceded
+accession
+accordingly
+acknowledge
+acknowledged
+ad hoc
+adopt
+adopted
+adoption
+aforegoing
+aforementioned
+aforesaid
+again
+agree
+agreed
+agreement
+already
+am
+amend
+amended
+amendment
+amendments
+an
+and
+annex
+annex i
+annex ii
+annex iii
+annexes
+appendices
+appendix
+application
+applied
+apply
+are
+article
+as applicable
+as appropriate
+as defined in
+as described in
+as determined in
+as established in
+as mentioned in
+as provided in
+as specified in
+as the case may be
+at
+attachment
+attachments
+authorised
+authorized
+balance of payments
+balance-of-payments
+be
+been
+being
+below
+bilateral
+bona fide
+but
+by
+calendar
+can
+certificate of origin
+certificates of origin
+chapter
+clause
+come into force
+communicate
+communication
+competent authorities
+competent authority
+concession
+concessions
+concluded
+confirm
+confirmation
+confirmed
+consider
+consideration
+considered
+consistent with
+constitute
+constituted
+constitution
+contained in
+contracting parties
+contracting party
+could
+create
+created
+customs
+customs clearance
+customs formalities
+customs union
+date
+dated
+dates
+day
+days
+de facto
+de jure
+decide
+decided
+decision
+deposit
+depositary
+deposited
+determination
+determine
+determined
+did
+do
+does
+doing
+domestic
+done at
+done in
+down
+duly
+during
+duties
+duty
+effect
+effective
+enter
+enter into force
+entered into
+entry
+entry into force
+establish
+established
+establishment
+et al
+et seq
+ex ante
+ex officio
+ex post
+exhibit
+exhibits
+exportation
+figure
+figures
+fiscal
+footnote
+footnotes
+for
+force
+form
+formation
+formed
+free trade agreement
+from
+fta
+gats
+gatt
+general agreement
+goods
+goods nomenclature
+had
+harmonized system
+has
+have
+having
+he
+hence
+her
+here
+hereafter
+hereby
+hereinabove
+hereinafter
+hereinbefore
+hereof
+hereto
+hereunder
+hers
+herself
+him
+himself
+his
+how
+i
+ibid
+idem
+implement
+implementation
+implemented
+importation
+in
+in accordance
+in accordance with
+in conformity with
+in duplicate
+in general
+in triplicate
+in witness whereof
+infra
+inter alia
+international
+into
+is
+it
+item
+items
+its
+itself
+jurisdiction
+jurisdictions
+just
+laid down
+laid out
+list
+lists
+market
+markets
+me
+member
+member state
+member states
+members
+mfn
+modification
+modifications
+modified
+modify
+month
+months
+more
+most
+most favored nation
+most favoured nation
+most-favored-nation
+most-favoured-nation
+multilateral
+mutatis mutandis
+my
+myself
+national
+no.
+nos.
+note
+noted
+notification
+notified
+notify
+notifying
+noting
+notwithstanding the foregoing
+now
+now therefore
+number
+numbers
+of
+off
+on
+once
+or
+our
+ours
+ourselves
+out
+over
+page
+pages
+paragraph
+part
+parties
+party
+plenipotentiaries
+plenipotentiary
+plurilateral
+preamble
+preferential trade agreement
+prima facie
+pro rata
+pta
+publish
+published
+pursuant
+pursuant to
+quantitative restriction
+quantitative restrictions
+quite
+quota
+quotas
+rather
+ratification
+ratified
+ratify
+ratifying
+re-export
+re-exportation
+re-exporting
+recall
+recalled
+recalling
+recognised
+recognition
+recognize
+recognized
+refer
+referenced
+referred to in
+referring
+regional trade agreement
+renew
+renewal
+renewed
+respectively
+review
+reviews
+revise
+revised
+revision
+revisions
+rta
+said
+same
+schedule
+schedules
+section
+see
+services
+set forth
+set out
+she
+signatories
+signatory
+signatory parties
+signatory party
+signed
+so
+still
+sub-clause
+sub-section
+subclause
+subparagraph
+subsection
+sui generis
+supra
+table
+tables
+tariff
+tariffs
+terminate
+terminated
+termination
+territorial
+territories
+territory
+that
+the
+the parties
+the party
+their
+theirs
+them
+themselves
+then
+there
+thereafter
+thereby
+therefore
+therein
+thereof
+thereon
+thereto
+thereunder
+therewith
+these
+they
+this
+those
+through
+thus
+title
+to
+too
+trade
+trips
+under
+undersigned
+up
+very
+vis à vis
+vis-a-vis
+was
+we
+were
+when
+whereas
+wherein
+whereof
+whereto
+whereunder
+who
+whom
+whose
+why
+will
+with
+withdraw
+withdrawal
+withdrawn
+witnesseth
+world trade
+world trade organization
+would
+wto
+year
+years
+yet
+you
+your
+yours
+yourself
+yourselves

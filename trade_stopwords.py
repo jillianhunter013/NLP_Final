@@ -247,10 +247,54 @@ LAYER_2_TRADE_STRUCTURAL = {
 
     # Common trade policy qualifiers (near-universal, low discriminatory value)
     "trade", "goods", "services",  # too broad — keep only in context
+    # NOTE: if your pipeline extracts bigrams/phrases, pre-protect
+    # "market access" (Layer 3) and "trade in services" (Layer 3) BEFORE
+    # applying unigram stopwords, or these component words will be stripped.
     "market", "markets",
     "customs", "duty", "duties",
     "tariff", "tariffs",
     "quota", "quotas",
+
+    # Procedural customs/administrative terms
+    # Universal across ALL PTAs regardless of depth; near-zero TF-IDF
+    # in the Alschner et al. (2018) corpus.
+    # CIS Annex I–II and MSG Annex I devote pages to these procedures
+    # identically in very shallow and deeper agreements alike.
+    "re-export", "re-exportation", "re-exporting",
+    "certificate of origin", "certificates of origin",
+    "importation", "exportation",
+    "competent authority", "competent authorities",
+    "customs clearance", "customs formalities",
+    "goods nomenclature", "harmonized system",  # HS classification references
+
+    # Baseline trade policy terms — universal across the full ~450-agreement corpus
+    # DESTA (Dür et al. 2014) codes MFN as present in >95% of all PTAs; it is
+    # the floor, not a discriminator.  Quantitative restriction elimination follows
+    # GATT Art. XI and is copy-pasted into even the shallowest 1-article FTAs.
+    "most favoured nation", "most-favoured-nation",
+    "most favored nation", "most-favored-nation",
+    "mfn",
+    "quantitative restriction", "quantitative restrictions",
+
+    # Terms moved here from Layer 3 after full-corpus reassessment:
+    # At 450-agreement scale these approach near-zero TF-IDF —
+    # they appear in the vast majority of PTAs regardless of depth.
+
+    # "concession"/"concessions": every PTA — even a 3-product positive-list
+    # agreement — mentions "tariff concessions".  Coverage breadth matters but
+    # the word itself does not discriminate; use schedule line-counts instead.
+    "concession", "concessions",
+
+    # "customs union": GATT Art. XXIV boilerplate is copy-pasted into most FTAs
+    # ("consistent with forming a free trade area or customs union") regardless of
+    # whether the agreement has any ambition toward a CU.
+    "customs union",
+
+    # "balance of payments": standard GATT Art. XII/XVIII carve-out language
+    # present in ~90 % of all PTAs.  The exception itself is near-universal;
+    # its SCOPE and conditionality are captured by surrounding Layer-3 terms
+    # ("shall", "notwithstanding", "subject to") rather than by the phrase alone.
+    "balance of payments", "balance-of-payments",
 }
 
 
@@ -362,6 +406,79 @@ LAYER_3_PROTECT = {
     "anti-dumping", "dumping",
     "state-owned enterprise", "soe",
     "currency", "exchange rate", "monetary",
+
+    # ---- Deep integration markers (Horn, Mavroidis & Sapir 2010; Dür et al. 2014) ----
+    # These terms discriminate shallow from deep PTAs in the WTO/ToTA corpus.
+    # MSG (21 arts, goods-only positive list) lacks virtually all of these;
+    # CIS Protocol and EFTA-style agreements contain them with increasing density.
+
+    # WTO+ core obligations (Horn, Mavroidis & Sapir 2010, Table 1)
+    "national treatment",                       # NT = canonical WTO+ provision; absent in shallowest PTAs
+    "market access",                            # DESTA depth dimension 1 (Dür, Baccini & Elsig 2014)
+
+    # Regulatory convergence / behind-the-border depth
+    # (Hofmann, Osnago & Ruta 2019 deep trade agreements taxonomy)
+    "harmonization", "harmonize", "harmonise",
+    "harmonisation", "harmonized", "harmonised",
+    "mutual recognition",                       # CIS Protocol Art. 12; absent in MSG entirely
+
+    # Market-opening depth beyond tariffs
+    "liberalization", "liberalize", "liberalise",
+    "liberalisation",
+    "non-tariff",                               # NTB scope separates shallow/deep (DESTA coding)
+    "trade facilitation",                       # Distinct modern depth dimension (WTO TFA 2013)
+
+    # Commitment precision / lock-in signals
+    "standstill",                               # Prevents rollback; marks legally binding schedules
+    # NOTE: "concession"/"concessions", "customs union", "balance of payments"
+    # were removed from this section after full-corpus reassessment — they are
+    # near-universal across the 450-agreement WTO/ToTA corpus and are now in Layer 2.
+
+    # Investment chapter markers — WTO-X provisions (Horn et al. 2010 WTO-X list)
+    "expropriation",
+    "fair and equitable treatment",
+    "investor-state",                           # ISDS clause; only in agreements with full investment chapters
+
+    # Services liberalization depth markers
+    # (Hofmann, Osnago & Ruta 2019; WTO GATS framework)
+    # DESTA codes services presence/depth separately from goods; these terms
+    # distinguish goods-only PTAs (the majority of shallow agreements) from
+    # ones with genuine services commitments — at 450-agreement scale this is
+    # a strong signal even after controlling for agreement length.
+    "trade in services",                        # Explicit services chapter bigram; absent in goods-only PTAs
+    "mode of supply", "modes of supply",        # GATS Art. I modes 1–4; only in serious services chapters
+    "positive list", "negative list",           # Scheduling approach: negative-list = deeper lock-in
+
+    # Regulatory depth — post-2000 deep trade agreement language
+    # (Hofmann, Osnago & Ruta 2019 "deep trade agreements" taxonomy;
+    #  Mattli & Büthe 2003 on regulatory governance)
+    # These phrases are absent from essentially all pre-2000 shallow FTAs
+    # and from goods-only agreements like MSG/CIS (1994).
+    "regulatory coherence",
+    "regulatory cooperation",                   # Broader than "cooperation" alone; signals behind-the-border depth
+
+    # Ratchet / lock-in mechanism
+    # A ratchet clause prevents parties from rolling back autonomous
+    # liberalization already granted above their scheduled commitment level.
+    # It is a marker of a legally precise, deeply binding agreement.
+    #
+    # PRECISION vs. RECALL trade-off:
+    # - Precision: when "ratchet" appears, it reliably signals a deep FTA.
+    #   Concentrated in post-2000 US-template and CPTPP-style agreements
+    #   (e.g., NAFTA Art. 1206, CPTPP Ch. 10).  Absent from all shallow
+    #   goods-only PTAs (MSG, early CIS, etc.).
+    # - Recall: POOR.  Many deep agreements implement the same mechanism
+    #   without the word "ratchet" — via negative-list scheduling,
+    #   "standstill" clauses (already in Layer 3), or structural binding
+    #   through schedule annexes.  EU comprehensive FTAs achieve ratchet
+    #   effects through different drafting conventions.
+    #
+    # Net assessment: keep in Layer 3 (never strip — if it appears, it IS
+    # signal), but do not expect it to be a high-frequency discriminator.
+    # The CCS for deep agreements will primarily be driven by the broader
+    # set of Layer-3 terms above; "ratchet" contributes marginally at the
+    # tail of the depth distribution.
+    "ratchet",
 }
 
 
@@ -503,6 +620,15 @@ if __name__ == "__main__":
         "annex", "chapter", "the", "dispute", "compliance",
         "provided that", "subject to", "mutatis mutandis",
         "territory", "investment", "wto", "remedy", "tariff",
+        # New additions — should all show Layer 3 (PROTECTED)
+        "national treatment", "market access", "harmonization",
+        "liberalization", "non-tariff", "trade facilitation",
+        "mutual recognition", "standstill", "expropriation",
+        "fair and equitable treatment", "customs union",
+        "concession", "balance of payments",
+        # New additions — should show Layer 2 (REMOVED)
+        "re-export", "re-exportation", "certificate of origin",
+        "importation", "exportation", "competent authority",
     ]
     for w in test_words:
         print(f"  {check_word(w)}")
