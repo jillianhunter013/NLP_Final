@@ -31,6 +31,10 @@ dependencies = [
   "striprtf>=0.0.26",          # RTF files (Spain AP exercise)
   "PyPDF2>=3.0",               # PDF text extraction
   "lxml>=5.2",                 # fast XML/HTML parser (used by ElementTree backend)
+   # ── Graph analysis ────────────────────────────────────────────────────────
+  "networkx>=3.3",             # bigram/trigram co-occurrence graphs
+  "pyvis>=0.3",                # interactive HTML graph visualisation
+
   # ── Utilities ─────────────────────────────────────────────────────────────
   "tqdm>=4.66",                # progress bars for corpus download loops
   "python-dotenv>=1.0",        # load GITHUB_TOKEN from .env file (never commit tokens)
