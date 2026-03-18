@@ -21,7 +21,7 @@ Key design decisions
 2.  DE-DUPLICATION
     When a pair is covered by >1 agreement in the same year we keep the most
     specific one (bilateral > plurilateral; tie-break: higher pta_id = more
-    recent).
+    recent). 
 
 3.  GRAVITY CONTROLS
     We embed time-invariant dyadic controls sourced from CEPII/DGD literature:
