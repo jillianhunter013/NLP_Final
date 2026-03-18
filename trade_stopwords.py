@@ -63,8 +63,8 @@ USPTO patent stopwords: arxiv.org/abs/2006.02633
 # LAYER 0 — Standard English function words
 # Source: spaCy en_core_web stopwords, pruned of legally significant terms.
 # Removed from standard list: "not", "no", "nor", "never", "unless",
-# "except", "if", "without", "whether", "provided", "further", "other",
-# "each", "every", "all", "both", "any", "only", "also", "as", "than",
+# "except", "without", "whether", "provided", "further", "other",
+# "each", "every", "all", "both", "any", "only", "also", "than",
 # "until", "before", "after", "between", "within", "beyond", "against"
 # — these carry meaning in legal conditionality and scope clauses.
 # ===========================================================================
@@ -95,6 +95,7 @@ LAYER_0_ENGLISH_BASE = {
     # Demonstratives
     "this", "that", "these", "those",
     # Common filler words
+    "if", "as",
     "accordingly", "thus", "hence", "therefore",
     "said", "same", "respectively",
 }
@@ -284,7 +285,7 @@ LAYER_3_PROTECT = {
     "recommend", "recommends",
 
     # ---- Conditionality triggers ----
-    "if", "unless", "except", "except where",
+    "unless", "except", "except where",
     "provided that", "provided however",
     "subject to", "notwithstanding",
     "without prejudice to",
