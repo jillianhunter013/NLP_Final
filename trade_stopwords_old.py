@@ -5,27 +5,8 @@ Domain-specific stopword lists for NLP preprocessing of
 Preferential Trade Agreement (PTA) texts.
 
 Built for the WTO/ToTA corpus (448 PTAs, Alschner et al. 2018).
-
-CHANGES FROM v3
----------------
-- "may" removed from LAYER_3_PROTECT soft markers and NOT added to any
-  removal layer. "May" is a permissive/discretionary marker in international
-  legal drafting (Vienna Convention), not a soft obligation — it grants a
-  right or discretion rather than expressing aspiration. Counting it as
-  soft obligation conflates legally distinct deontic categories.
-- "consider" removed from soft obligation markers for the same reason —
-  "shall consider" is a procedural instruction, not aspiration.
-- "as appropriate" and "as applicable" remain in LAYER_1 (treated as
-  boilerplate) rather than OBLIGATION_SOFT. Known limitation: these are
-  genuine soft hedges in treaty language but are sufficiently formulaic
-  across all agreements that their discriminatory value is low. Documented
-  here for transparency.
-- "facilitate" / "facilitates" retained in LAYER_3_PROTECT. It appears
-  both as a soft obligation verb and as procedural language — ambiguous
-  enough to protect from removal rather than classify definitively.
-- OBLIGATION_MIXED added (in scoring module, not here) to handle
-  "shall endeavour"-type phrases where hard grammatical vehicle carries
-  soft substantive content. See dict_score() in nb_v4.ipynb.
+Designed to work alongside the Alschner segmentation pipeline:
+  chapter → article → header → full_text (XML format).
 
 STRUCTURE
 ---------
@@ -37,36 +18,45 @@ Four distinct layers, each importable separately:
                                discriminatory power across agreements
   LAYER_2_TRADE_STRUCTURAL  — trade agreement formatting & procedural words
                                (structural noise, not substantive content)
-  LAYER_3_PROTECT           — NEVER stopword these; they are obligation
-                               scoring signals. Validated at runtime.
+  LAYER_3_PROTECT           — NEVER stopword these; they are CCS index signals
 
 USAGE
 -----
     from trade_stopwords import get_stopwords, LAYER_3_PROTECT
 
+    # Default: all three removal layers combined
     sw = get_stopwords()
+
+    # Check nothing from the protected list leaked in
     assert not sw.intersection(LAYER_3_PROTECT), "Protected terms in stopword set!"
+
+    # Extend with your own additions
+    sw = get_stopwords(extra={"pursuant", "aforementioned"})
+
+    # Use only legal boilerplate layer (e.g. for a lighter pass)
+    sw = get_stopwords(layers=[1, 2])
 
 NOTES ON DESIGN CHOICES
 ------------------------
 - "whereas" is in LAYER_1 (boilerplate) because in preambles it is
-  formulaic.
+  formulaic. However, if you are analysing preamble vs. body separately,
+  you may want to keep it for preamble-tone analysis.
 - "annex", "schedule", "appendix" are in LAYER_2 as structural words.
-  If including annexes in a robustness check, remove these from active set.
+  If you are *including* annexes in your CCS (recommended for robustness
+  check), remove these from the active stopword set.
 - All words are lowercase. Apply .lower() before filtering.
-- Conservative by design: when in doubt, do NOT stopword.
-- "may", "consider" are NOT in any layer — they are context-dependent
-  and handled at the scoring stage.
+- This list is intentionally conservative. When in doubt, we do NOT
+  stopword — false removals destroy signal; false retentions only add
+  minor noise.
 
 REFERENCES
 ----------
 Alschner, W., Seiermann, J., & Skougarevskiy, D. (2018).
-  Text of Trade Agreements (ToTA). Journal of Empirical Legal Studies, 15(3).
-Abbott, K.W. et al. (2000). The Concept of Legalization.
-  International Organization, 54(3), 401-419.
-Vienna Convention on the Law of Treaties (1969). UNTS vol. 1155.
+  Text-as-data analysis of preferential trade agreements.
+  Journal of International Economic Law, 21(1), 1–21.
 LexNLP legal stopwords: github.com/LexPredict/lexpredict-lexnlp
 spaCy English stopwords: spacy.io/api/language#defaults
+USPTO patent stopwords: arxiv.org/abs/2006.02633
 """
 
 # ===========================================================================
@@ -77,7 +67,6 @@ spaCy English stopwords: spacy.io/api/language#defaults
 # "each", "every", "all", "both", "any", "only", "also", "than",
 # "until", "before", "after", "between", "within", "beyond", "against"
 # — these carry meaning in legal conditionality and scope clauses.
-# "may" intentionally excluded — permissive marker, handled at scoring stage.
 # ===========================================================================
 
 LAYER_0_ENGLISH_BASE = {
@@ -95,10 +84,10 @@ LAYER_0_ENGLISH_BASE = {
     "of", "in", "to", "for", "on", "at", "by", "with", "about",
     "into", "through", "during", "above", "below", "from",
     "up", "down", "out", "off", "over", "under",
-    # Auxiliaries (safe ones — "may", "shall", "must", "should" EXCLUDED)
+    # Auxiliaries (safe ones — "may", "shall", "must", "should" REMOVED)
     "am", "is", "are", "was", "were", "be", "been", "being",
     "have", "has", "had", "having", "do", "does", "did", "doing",
-    "will", "would", "can", "could",
+    "will", "would", "would", "can", "could",
     # Common adverbs (safe to remove)
     "here", "there", "when", "how", "why",
     "very", "more", "most", "just", "now", "then", "again",
@@ -117,11 +106,6 @@ LAYER_0_ENGLISH_BASE = {
 # These appear in nearly every PTA regardless of content or ambition.
 # High corpus frequency, near-zero TF-IDF value across the 448 PTA corpus.
 # Latin terms common in international legal drafting are included.
-#
-# NOTE: "as appropriate" and "as applicable" are treated as boilerplate
-# here rather than soft obligation markers. Known limitation — these are
-# genuine soft hedges in some contexts but their near-universal frequency
-# across all agreements (regardless of ambition) makes them low-signal.
 # ===========================================================================
 
 LAYER_1_LEGAL_BOILERPLATE = {
@@ -159,10 +143,11 @@ LAYER_1_LEGAL_BOILERPLATE = {
     "in conformity with", "consistent with",
     "notwithstanding the foregoing",  # "notwithstanding" alone is PROTECTED
     "as the case may be",
-    "as appropriate",   # NOTE: soft hedge but near-universal; see docstring
-    "as applicable",    # NOTE: same rationale as "as appropriate"
+    "as appropriate",
+    "as applicable",
 
     "in general",
+    "inter alia",
 
     # Document reference words (structural, not substantive)
     "see", "refer", "referenced", "referring",
@@ -177,11 +162,12 @@ LAYER_1_LEGAL_BOILERPLATE = {
 # ===========================================================================
 # LAYER 2 — Trade agreement structural & procedural noise
 # Formatting words, procedural terms, and WTO/PTA boilerplate that appear
-# uniformly across all agreements.
+# uniformly across all agreements — they describe *where* text is located
+# or *how* the document is organized, not *what* it commits to.
 #
 # NOTE: "annex", "schedule", "appendix" are included here because the
-# Alschner pipeline strips annexes. If running WITH annexes for a
-# robustness check, comment out that sub-group.
+# Alschner pipeline strips annexes. If you run a version WITH annexes,
+# comment out that sub-group and re-run your CCS comparison.
 # ===========================================================================
 
 LAYER_2_TRADE_STRUCTURAL = {
@@ -192,7 +178,7 @@ LAYER_2_TRADE_STRUCTURAL = {
     "part", "title", "preamble",
     "page", "pages",
 
-    # Annex/schedule group
+    # Annex/schedule group (see note above — comment out if including annexes)
     "annex", "annexes", "annex i", "annex ii", "annex iii",
     "schedule", "schedules", "appendix", "appendices",
     "attachment", "attachments", "exhibit", "exhibits",
@@ -220,18 +206,14 @@ LAYER_2_TRADE_STRUCTURAL = {
 
     # Procedural/temporal markers (administrative, not substantive)
     "date", "dates", "dated",
-    "year", "years", "month", "months", "day",
-    # NOTE: "days" intentionally removed from here AND from enforcement dict.
-    # "days" (e.g. "within 30 days") is a precision/timeline marker that
-    # fires in almost every article containing a deadline — too diffuse
-    # to carry enforcement signal. Removed from both locations in v4.
+    "year", "years", "month", "months", "day", "days",
     "calendar", "fiscal",
     "enter", "entry",
     "force", "effect", "effective",
     "amendment", "amendments", "amend", "amended",
     "modification", "modifications", "modify", "modified",
     "revision", "revisions", "revise", "revised",
-    "review", "reviews",
+    "review", "reviews",  # BUT "reviewed" can signal enforcement — watch
     "renewal", "renew", "renewed",
     "termination", "terminate", "terminated",
     "withdrawal", "withdraw", "withdrawn",
@@ -240,8 +222,8 @@ LAYER_2_TRADE_STRUCTURAL = {
     "publish", "published",
     "deposit", "depositary", "deposited",
 
-    # Generic administrative verbs
-    "agree", "agreed", "agreement",
+    # Generic administrative verbs (too diffuse to carry CCS signal)
+    "agree", "agreed", "agreement",  # ironic, but too generic
     "establish", "established", "establishment",
     "constitute", "constituted", "constitution",
     "create", "created",
@@ -250,6 +232,7 @@ LAYER_2_TRADE_STRUCTURAL = {
     "apply", "applied", "application",
     "implement", "implemented", "implementation",
     "determine", "determined", "determination",
+    "consider", "considered", "consideration",
     "decide", "decided", "decision",
     "recognize", "recognised", "recognized", "recognition",
     "acknowledge", "acknowledged",
@@ -264,7 +247,7 @@ LAYER_2_TRADE_STRUCTURAL = {
     "bilateral", "plurilateral",
 
     # Common trade policy qualifiers (near-universal, low discriminatory value)
-    "trade", "goods", "services",
+    "trade", "goods", "services",  # too broad — keep only in context
     "market", "markets",
     "customs", "duty", "duties",
     "tariff", "tariffs",
@@ -274,39 +257,22 @@ LAYER_2_TRADE_STRUCTURAL = {
 
 # ===========================================================================
 # LAYER 3 — PROTECTED TERMS
-# These are obligation scoring signals. NEVER add to the active stopword set.
-# Used for validation only — runtime assertion confirms zero overlap.
+# These are CCS index signals. NEVER add to the active stopword set.
+# They measure: obligation density, conditionality, precision, enforcement.
 #
-# CHANGES FROM v3:
-# - "may" removed: permissive marker, not a soft obligation
-# - "consider" / "considered" removed: procedural instruction, not aspiration
-#   Both are now handled at the scoring stage (not counted as soft obligation)
+# This set is used for validation only — run an assertion check to ensure
+# none of these appear in your active stopword set.
 # ===========================================================================
 
 LAYER_3_PROTECT = {
-    # ---- Hard obligation markers ----
+    # ---- Obligation markers (hard) ----
     "shall", "must", "is required", "are required",
     "required to", "obliged to", "obligated to",
     "undertakes to", "undertake to", "undertakes",
     "commits to", "commit to", "commits",
     "binds", "bound to", "bound by",
-    # Additional hard obligation phrases (Hofmann et al. enforceability grounding)
-    "shall be subject to", "shall have the right to", "shall be entitled to",
-    "shall be prohibited", "is prohibited", "are prohibited",
-    "shall ensure", "must ensure", "will ensure",
-    "shall not", "must not",
 
-    # ---- Mixed obligation markers (hard vehicle + soft content) ----
-    # These are protected so they survive preprocessing for the MIXED dict
-    "shall endeavour", "shall endeavor",
-    "shall seek to", "shall promote",
-    "shall encourage", "shall aim to",
-    "shall strive", "shall facilitate",
-    "shall cooperate", "shall take into account",
-    "shall have regard to", "shall consider",
-    "shall work towards", "shall work toward",
-
-    # ---- Pure soft / best-endeavour markers ----
+    # ---- Soft-language / best-endeavour markers ----
     "should", "endeavour", "endeavor",
     "endeavours", "endeavors",
     "encourage", "encourages", "encouraged",
@@ -317,9 +283,6 @@ LAYER_3_PROTECT = {
     "facilitate", "facilitates",
     "cooperate", "cooperates", "cooperation",
     "recommend", "recommends",
-    "best efforts", "best endeavours",
-    "where possible", "where feasible",
-    "to the extent possible", "to the extent practicable",
 
     # ---- Conditionality triggers ----
     "unless", "except", "except where",
@@ -373,13 +336,13 @@ LAYER_3_PROTECT = {
     "define", "defined", "definition", "definitions",
     "means", "meaning",
     "refers", "reference",
-    "herein",
+    "herein", # debated — keep protected since "as defined herein" scopes obligations
     "timeline", "timelines", "timeframe", "time frame",
     "within", "no later than", "not later than",
     "deadline", "deadlines",
     "period", "periods",
 
-    # ---- Issue area coverage ----
+    # ---- Issue area coverage (binary provision indicators) ----
     "investment", "investor", "investors",
     "intellectual property", "copyright", "patent", "trademark",
     "competition", "anti-competitive", "monopoly",
@@ -418,19 +381,32 @@ def get_stopwords(
     Parameters
     ----------
     layers : list of int, optional
-        Which layers to include. Default is [0, 1, 2].
-        Do NOT include 3 — Layer 3 is the protected set.
+        Which layers to include. Default is [0, 1, 2] (all removal layers).
+        Options: 0 = English base, 1 = legal boilerplate, 2 = trade structural.
+        Do NOT include 3 — Layer 3 is the protected set, not for removal.
 
     extra : set, optional
-        Additional words to add. Not checked against LAYER_3_PROTECT.
+        Additional domain-specific words to add to the stopword set.
+        These are NOT checked against LAYER_3_PROTECT — you are responsible
+        for not adding protected terms here.
 
     validate : bool, optional
-        If True (default), raises AssertionError if any LAYER_3_PROTECT
-        term ends up in the final stopword set.
+        If True (default), raises AssertionError if any LAYER_3_PROTECT term
+        ends up in the final stopword set. Highly recommended to keep True.
 
     Returns
     -------
     set of str
+        Lowercase stopword set ready for token filtering.
+
+    Examples
+    --------
+    >>> sw = get_stopwords()
+    >>> tokens = ["the", "parties", "shall", "endeavour", "to", "cooperate"]
+    >>> filtered = [t for t in tokens if t.lower() not in sw]
+    >>> # filtered = ["shall", "endeavour", "cooperate"]
+    # Note: "to" removed (Layer 0), "the"/"parties" removed (Layer 0/2)
+    # "shall", "endeavour", "cooperate" RETAINED (Layer 3 protected)
     """
     if layers is None:
         layers = [0, 1, 2]
@@ -446,7 +422,7 @@ def get_stopwords(
         if layer_id not in layer_map:
             raise ValueError(
                 f"Layer {layer_id} not valid. Choose from 0, 1, 2. "
-                f"Layer 3 is LAYER_3_PROTECT — never added to stopwords."
+                f"Layer 3 is LAYER_3_PROTECT and is never added to stopwords."
             )
         active.update(layer_map[layer_id])
 
@@ -457,7 +433,7 @@ def get_stopwords(
         leaked = active.intersection(LAYER_3_PROTECT)
         if leaked:
             raise AssertionError(
-                f"Protected signal terms found in stopword set: {leaked}\n"
+                f"Protected CCS signal terms found in stopword set: {leaked}\n"
                 f"Remove these from your custom additions or check layer definitions."
             )
 
@@ -467,28 +443,38 @@ def get_stopwords(
 def describe_layers() -> None:
     """Print a summary of each layer with word counts."""
     print("=" * 60)
-    print("TRADE AGREEMENT STOPWORD LAYERS — SUMMARY (v4)")
+    print("TRADE AGREEMENT STOPWORD LAYERS — SUMMARY")
     print("=" * 60)
     layers = [
         ("Layer 0 — English base (pruned)",   LAYER_0_ENGLISH_BASE,      "REMOVE"),
         ("Layer 1 — Legal boilerplate",        LAYER_1_LEGAL_BOILERPLATE, "REMOVE"),
         ("Layer 2 — Trade structural noise",   LAYER_2_TRADE_STRUCTURAL,  "REMOVE"),
-        ("Layer 3 — Signal terms (KEEP)",      LAYER_3_PROTECT,           "PROTECT"),
+        ("Layer 3 — CCS signal terms (KEEP)",  LAYER_3_PROTECT,           "PROTECT"),
     ]
     for name, layer, action in layers:
         print(f"\n  {name}")
         print(f"  Action : {action}")
         print(f"  Words  : {len(layer)}")
-    total_remove = len(
-        LAYER_0_ENGLISH_BASE | LAYER_1_LEGAL_BOILERPLATE | LAYER_2_TRADE_STRUCTURAL
-    )
+    total_remove = len(LAYER_0_ENGLISH_BASE | LAYER_1_LEGAL_BOILERPLATE | LAYER_2_TRADE_STRUCTURAL)
     print(f"\n  Total active stopwords (all removal layers): {total_remove}")
-    print(f"  Total protected signal terms              : {len(LAYER_3_PROTECT)}")
+    print(f"  Total protected CCS signal terms          : {len(LAYER_3_PROTECT)}")
     print("=" * 60)
 
 
 def check_word(word: str) -> str:
-    """Diagnostic: tell you which layer a given word belongs to."""
+    """
+    Diagnostic: tell you which layer a given word belongs to.
+
+    Parameters
+    ----------
+    word : str
+        A word or phrase to look up (case-insensitive).
+
+    Returns
+    -------
+    str
+        Description of the layer(s) the word appears in.
+    """
     w = word.lower().strip()
     found = []
     if w in LAYER_0_ENGLISH_BASE:
@@ -498,29 +484,40 @@ def check_word(word: str) -> str:
     if w in LAYER_2_TRADE_STRUCTURAL:
         found.append("Layer 2 — Trade structural (REMOVED)")
     if w in LAYER_3_PROTECT:
-        found.append("Layer 3 — Signal term (PROTECTED — never remove)")
+        found.append("Layer 3 — CCS signal (PROTECTED — never remove)")
     if not found:
-        return f"'{word}' not found in any layer (content word — kept by default)"
+        return f"'{word}' not found in any layer (treat as content word, keep by default)"
     return f"'{word}' → " + "; ".join(found)
 
 
+# ===========================================================================
+# QUICK DEMO — run python trade_stopwords.py
+# ===========================================================================
+
 if __name__ == "__main__":
     describe_layers()
-    print("\n--- Layer check examples (v4 changes) ---")
+
+    print("\n--- Layer check examples ---")
     test_words = [
-        "shall", "must", "should", "endeavour", "may", "consider",
-        "whereas", "hereinafter", "parties", "article",
-        "dispute", "arbitration", "compliance",
-        "shall endeavour", "shall ensure", "shall not",
-        "as appropriate", "provided that", "subject to",
-        "investment", "transparency",
+        "shall", "must", "whereas", "hereinafter", "parties",
+        "article", "endeavour", "notwithstanding", "arbitration",
+        "annex", "chapter", "the", "dispute", "compliance",
+        "provided that", "subject to", "mutatis mutandis",
+        "territory", "investment", "wto", "remedy", "tariff",
     ]
     for w in test_words:
         print(f"  {check_word(w)}")
 
-    print("\n--- v4 key changes ---")
-    print("  'may'     : NOT in any layer (permissive, not soft obligation)")
-    print("  'consider': NOT in any layer (procedural, not aspiration)")
-    print("  'days'    : NOT in Layer 2 (removed — too diffuse for enforcement signal)")
-    print("  Mixed phrases like 'shall endeavour': in LAYER_3_PROTECT")
-    print("    → survived preprocessing → caught by OBLIGATION_MIXED in scoring")
+    print("\n--- Filtering demo ---")
+    sample_sentence = (
+        "the parties shall endeavour to ensure compliance with "
+        "the provisions set forth herein and shall establish "
+        "an arbitration panel pursuant to annex i of this agreement"
+    )
+    sw = get_stopwords()
+    tokens = sample_sentence.lower().split()
+    filtered = [t for t in tokens if t not in sw]
+    print(f"  Original : {sample_sentence}")
+    print(f"  Filtered : {' '.join(filtered)}")
+    print(f"  (Kept 'shall', 'endeavour', 'compliance', 'provisions',")
+    print(f"   'arbitration', 'panel' — removed structural/boilerplate noise)")
