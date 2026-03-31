@@ -38,6 +38,7 @@ dependencies = [
   "tqdm>=4.66",                # progress bars for corpus download loops
   "python-dotenv>=1.0",        # load GITHUB_TOKEN from .env file (never commit tokens)
   "pycountry>=26.2.16",
+  "openpyxl>=3.1.5",
 ]
 
 [dependency-groups]
